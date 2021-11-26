@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>MNIST</title>
+        <style>
+            :root {
+                --width: 10px;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100vw;
+                height: 100vh;
+            }
+
+            .container {
+                display: grid;
+                grid-template-columns: repeat(28, var(--width));
+                grid-template-rows: repeat(28, var(--width));
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container" id="container"></div>
+        <input type="range" min="0" max="255" id="slider" />
+        <input type="number" min="0" max="255" id="number" />
+    </body>
+    <script>
+        containerElem = document.getElementById("container");
+        sliderElem = document.getElementById("slider");
+        numberElem = document.getElementById("number");
+        array = [
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 18, 18, 18, 126, 136,
+                175, 26, 166, 255, 247, 127, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 30, 36, 94, 154, 170, 253, 253, 253,
+                253, 253, 225, 172, 253, 242, 195, 64, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 49, 238, 253, 253, 253, 253, 253, 253, 253,
+                253, 251, 93, 82, 82, 56, 39, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 18, 219, 253, 253, 253, 253, 253, 198, 182,
+                247, 241, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 80, 156, 107, 253, 253, 205, 11, 0, 43,
+                154, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 1, 154, 253, 90, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 139, 253, 190, 2, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 190, 253, 70, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35, 241, 225, 160, 108, 1,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 240, 253, 253, 119,
+                25, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 186, 253, 253,
+                150, 27, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 93, 252, 253,
+                187, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 249, 253,
+                249, 64, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 46, 130, 183, 253,
+                253, 207, 2, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 39, 148, 229, 253, 253, 253,
+                250, 182, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 114, 221, 253, 253, 253, 253,
+                201, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 23, 66, 213, 253, 253, 253, 253, 198,
+                81, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 18, 171, 219, 253, 253, 253, 253, 195, 80, 9,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 55, 172, 226, 253, 253, 253, 253, 244, 133, 11, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 136, 253, 253, 253, 212, 135, 132, 16, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0
+            ],
+            [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0
+            ]
+        ];
+        childs = [];
+        numChilds = array.length * array.length;
+        numOfCols = array.length;
+        defaultValue = 150;
+        sliderElem.value = defaultValue;
+        numberElem.value = defaultValue;
+
+        for (let i = 0; i < array.length; i++) {
+            for (let j = 0; j < array[i].length; j++) {
+                let child = document.createElement("div");
+                child.classList.add("child");
+                let color = array[i][j] < defaultValue ? 0 : 255;
+                child.style.backgroundColor = `rgb(${color},${color},${color})`;
+                containerElem.append(child);
+                childs.push(child);
+            }
+        }
+
+        function update(e) {
+            const value = e.target.value;
+            numberElem.value = value;
+            sliderElem.value = value;
+            for (let x = 0; x < numChilds; x++) {
+                let i = Math.floor(x / numOfCols);
+                let j = x % numOfCols;
+
+                let color = array[i][j] < value ? 0 : 255;
+                childs[
+                    x
+                ].style.backgroundColor = `rgb(${color},${color},${color})`;
+            }
+        }
+
+        sliderElem.addEventListener("input", update);
+        numberElem.addEventListener("input", update);
+    </script>
+</html>
